@@ -1,0 +1,17 @@
+{
+  "name": "grocery-store-mern",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start-frontend": "npm start --prefix client",
+    "start-backend": "npm start --prefix server",
+    "dev": "concurrently \"npm run start-frontend\" \"npm run start-backend\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
