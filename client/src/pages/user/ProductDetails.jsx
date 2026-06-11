@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from "../../utils/api";
+import { useAuth } from "../../contexts/AuthContext";
 
 const ProductDetails = () => {
     const { id } = useParams();
+    const { user, updateCartCount } = useAuth();
     const [product, setProduct] = useState(null);
     const [reviews, setReviews] = useState([]);
     const [selectedQuantity, setSelectedQuantity] = useState(null);
@@ -13,14 +15,6 @@ const ProductDetails = () => {
     const [hasPurchased, setHasPurchased] = useState(false);
     const [hasReviewed, setHasReviewed] = useState(false);
   const [addingToCart, setAddingToCart] = useState(false);
-const [userId, setUserId] = useState(null);
-
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser && storedUser._id) {
-      setUserId(storedUser._id);
-    } 
-  }, []);
 
     useEffect(() => {
         fetchProduct();
@@ -47,13 +41,14 @@ const [userId, setUserId] = useState(null);
     useEffect(() => {
     fetchProduct();
     fetchReviews();
-    checkPurchaseAndReview();
-}, [id]);
+    if (user?._id) {
+        checkPurchaseAndReview();
+    }
+}, [id, user?._id]);
 
 const checkPurchaseAndReview = async () => {
     try {
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (!user) return;
+        if (!user?._id) return;
 
         const res = await api.get(`/orders/has-purchased/${user._id}/${id}`);
         setHasPurchased(res.data.purchased);
@@ -106,7 +101,7 @@ const checkPurchaseAndReview = async () => {
 
     const handleCartSubmit = async(productId) => {
         if (validateQuantity()) {
-            if (!userId) {
+            if (!user?._id) {
       toast.error("Please log in to add to cart.");
       return;
     }
@@ -114,7 +109,7 @@ const checkPurchaseAndReview = async () => {
     setAddingToCart(true);
     try {
       const response = await api.post(`/cart`, {
-        userId,
+        userId: user._id,
         productId,
         quantity: selectedQuantity,
       });
@@ -140,17 +135,14 @@ const checkPurchaseAndReview = async () => {
     if (!validateReview()) return;
 
     try {
-        const user = JSON.parse(localStorage.getItem("user")); // adjust key as per your storage key
-        const userId = user?._id;
-
-        if (!userId) {
+        if (!user?._id) {
             toast.error("You must be logged in to submit a review.");
             return;
         }
 
         await api.post("/reviews", {
             productId: id,
-            userId,
+            userId: user._id,
             rating: review.rating,
             review: review.review,
         });

@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { addToWishlist, removeFromWishlist, getWishlist } = require('../controllers/wishlist.controller');
+const { verifyJWT } = require("../middlewares/auth.middleware");
+
+router.use(verifyJWT);
 
 // Route to add a product to the wishlist
 router.post('/:userId/add', addToWishlist);

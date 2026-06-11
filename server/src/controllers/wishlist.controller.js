@@ -8,6 +8,10 @@ const addToWishlist = asyncHandler(async (req, res) => {
     const { productId } = req.body;
     const { userId } = req.params;
 
+    if (req.user._id.toString() !== userId.toString() && req.user.role !== 'Admin') {
+        throw new ApiError(403, "Unauthorized access");
+    }
+
     // Check if the product exists
     const product = await Product.findById(productId);
     if (!product) {
@@ -42,6 +46,10 @@ const removeFromWishlist = asyncHandler(async (req, res) => {
     const { productId } = req.body;
     const { userId } = req.params;
 
+    if (req.user._id.toString() !== userId.toString() && req.user.role !== 'Admin') {
+        throw new ApiError(403, "Unauthorized access");
+    }
+
     // Find the user's wishlist
     const wishlist = await UserWishlist.findOne({ userId });
 
@@ -63,6 +71,10 @@ const removeFromWishlist = asyncHandler(async (req, res) => {
 // Get the user's wishlist
 const getWishlist = asyncHandler(async (req, res) => {
     const { userId } = req.params;
+
+    if (req.user._id.toString() !== userId.toString() && req.user.role !== 'Admin') {
+        throw new ApiError(403, "Unauthorized access");
+    }
 
     // Find the user's wishlist
     const wishlist = await UserWishlist.findOne({ userId }).populate('productIds');

@@ -3,26 +3,27 @@ import BillingAddressForm from "./BillingAddressForm";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../../../utils/api";
 import { toast } from "react-toastify";
+import { useAuth } from "../../../contexts/AuthContext";
 
 const Checkout = () => {
+	const { user } = useAuth();
 	const [showBillingForm, setShowBillingForm] = useState(false);
 	const [selectedAddress, setSelectedAddress] = useState(null);
 	const [errors, setErrors] = useState({});
 	const [addresses, setAddresses] = useState([]);
 	const [cartItems, setCartItems] = useState([]);
-	const [userId, setUserId] = useState(null); // e.g. from localStorage or context
 	const [appliedOffer, setAppliedOffer] = useState(null);
 	const [discountAmount, setDiscountAmount] = useState(0);
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		const user = JSON.parse(localStorage.getItem("user"));
-		if (user) {
-			setUserId(user._id);
+		if (user?._id) {
 			fetchAddresses(user._id);
 			fetchCart(user._id);
+		} else if (user === null) {
+			navigate("/login");
 		}
-	}, []);
+	}, [user, navigate]);
 	useEffect(() => {
 		const offerData = sessionStorage.getItem("appliedOffer");
 		if (offerData && cartItems.length > 0) {
@@ -86,7 +87,7 @@ setDiscountAmount(offer.maxDiscount);
 
 		try {
             const stockCheckRes = await api.get(
-			`/orders/check-stock/${userId}`
+			`/orders/check-stock/${user?._id}`
 		);
 		if (stockCheckRes.status=== 400 || stockCheckRes.status=== 500) {
 			toast.error(stockCheckRes.data.message);
@@ -131,7 +132,7 @@ setDiscountAmount(offer.maxDiscount);
 						const confirmRes = await api.post(
 							"/orders/checkout",
 							{
-								userId,
+								userId: user?._id,
 								addressId: selectedAddress,
 								promoCodeId: appliedOffer?._id || null,
 								razorpayOrderId: response.razorpay_order_id,
@@ -191,7 +192,7 @@ setDiscountAmount(offer.maxDiscount);
 			<div className="container">
 				<div className="row g-5">
 					<div className="col-md-6">
-						{showBillingForm && <BillingAddressForm  userId={userId} fetchAddresses={fetchAddresses} /> }
+						{showBillingForm && <BillingAddressForm  userId={user?._id} fetchAddresses={fetchAddresses} /> }
 						<div
 							className="card border-0"
 							style={{ marginTop: "20px" }}

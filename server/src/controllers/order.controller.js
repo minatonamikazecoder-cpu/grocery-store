@@ -13,6 +13,10 @@ const ApiError = require("../utils/ApiError");
 exports.checkStockAvailability = asyncHandler(async (req, res) => {
     const { userId } = req.params;
 
+    if (req.user._id.toString() !== userId.toString()) {
+        throw new ApiError(403, "Unauthorized access");
+    }
+
     const cart = await Cart.findOne({ userId }).populate("items.productId");
 
     if (!cart || cart.items.length === 0) {
@@ -47,6 +51,10 @@ exports.checkout = asyncHandler(async (req, res) => {
         razorpayOrderId,
         razorpayPaymentId,
     } = req.body;
+
+    if (req.user._id.toString() !== userId.toString()) {
+        throw new ApiError(403, "Unauthorized access");
+    }
 
     // 1. Get cart by userId
     const cart = await Cart.findOne({ userId }).populate("items.productId");
@@ -352,6 +360,10 @@ exports.getOrderById = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Order not found.");
     }
 
+    if (order.userId._id.toString() !== req.user._id.toString() && req.user.role !== 'Admin') {
+        throw new ApiError(403, "Unauthorized access");
+    }
+
     // Fetch all OrderItems related to this order and populate productId for each item
     const orderItems = await OrderItem.find({ orderId: orderId })
         .populate("productId", "productName productImage")
@@ -394,6 +406,10 @@ exports.hasUserPurchasedProduct = asyncHandler(async (req, res) => {
 
 exports.getOrdersByUserId = asyncHandler(async (req, res) => {
     const { userId } = req.params;
+
+    if (req.user._id.toString() !== userId.toString()) {
+        throw new ApiError(403, "Unauthorized access");
+    }
 
     const orders = await Order.find({ userId, isDeleted: false })
         .populate("delAddressId")

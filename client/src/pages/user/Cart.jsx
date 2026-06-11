@@ -7,7 +7,7 @@ import { useAuth } from "../../contexts/AuthContext"; // Importing AuthContext
 
 const Cart = () => {
 	const shippingCharge = 50;
-	const { cartCount, updateCartCount } = useAuth(); // Accessing cart count and update method from AuthContext
+	const { user, token, cartCount, updateCartCount } = useAuth(); // Accessing user, token, cart count and update method from AuthContext
 	const [cart, setCart] = useState([]);
 	const [offers, setOffers] = useState([]);
 	const [appliedOffer, setAppliedOffer] = useState(null);
@@ -72,10 +72,8 @@ setDiscountAmount(offer.maxDiscount);
 
 	// Fetch cart items dynamically
 	useEffect(() => {
-		const user = JSON.parse(localStorage.getItem("user"));
-		const token = localStorage.getItem("token");
 		if (!user || !user._id) {
-			toast.error("User not found in local storage");
+			toast.error("User not logged in");
 			return;
 		}
 
@@ -96,10 +94,10 @@ setDiscountAmount(offer.maxDiscount);
 			})
 			.catch(() => toast.error("Failed to load offers"));
 
-	}, [updateCartCount]);
+	}, [user, updateCartCount]);
 
 	const handleQuantityChange = (id, amount) => {
-		const user = JSON.parse(localStorage.getItem("user"));
+		if (!user?._id) return;
 
 		setCart((prevCart) =>
 			prevCart.map((item) =>
@@ -125,7 +123,7 @@ setDiscountAmount(offer.maxDiscount);
 	};
 
 	const handleDelete = (id) => {
-		const user = JSON.parse(localStorage.getItem("user"));
+		if (!user?._id) return;
 
 		api
 			.delete(`/cart/${user._id}`, {

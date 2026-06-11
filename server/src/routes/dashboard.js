@@ -1,10 +1,13 @@
 const express = require("express");
 const router = express.Router();
+const { verifyJWT, verifyAdmin } = require("../middlewares/auth.middleware");
 
 const Product = require("../models/Product");
 const Order = require("../models/Order");
 const Category = require("../models/Category");
 const User = require("../models/User");
+
+router.use(verifyJWT, verifyAdmin);
 
 router.get("/", async (req, res) => {
   try {

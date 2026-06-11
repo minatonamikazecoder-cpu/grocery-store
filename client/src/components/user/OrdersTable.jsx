@@ -1,30 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from "../../utils/api";
+import { useAuth } from "../../contexts/AuthContext";
 
 const OrdersTable = () => {
-  const [userId, setUserId] = useState(null);
+  const { user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Step 1: Get userId from localStorage
+  // Step 1: Check authentication
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser && storedUser._id) {
-      setUserId(storedUser._id);
-    } else {
+    if (!user) {
       navigate("/login");
     }
-  }, [navigate]);
+  }, [user, navigate]);
 
-  // Step 2: Fetch orders once userId is set
+  // Step 2: Fetch orders once user is set
   useEffect(() => {
-    if (!userId) return;
+    if (!user?._id) return;
 
     const fetchOrders = async () => {
       try {
-        const res = await api.get(`/orders/user/${userId}`);
+        const res = await api.get(`/orders/user/${user._id}`);
         setOrders(res.data.orders || []);
       } catch (err) {
         console.error('Failed to fetch orders:', err);
@@ -34,7 +32,7 @@ const OrdersTable = () => {
     };
 
     fetchOrders();
-  }, [userId]);
+  }, [user?._id]);
 
   return (
     <div>

@@ -54,9 +54,6 @@ try {
     const res = await api.post("/users/login", formData);
 
     toast.success("Login successful!");
-    localStorage.setItem("token", res.data.token);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
-
     login(res.data.token, res.data.user);
 
     if (res.data.user.role === "admin") {

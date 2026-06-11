@@ -22,6 +22,16 @@ This document lists identified issues and technical debt within the `grocery-sto
 
 ## 5. Security (RESOLVED)
 - **Error Exposure**: FIXED. The centralized error-handling middleware now filters error details sent to the client, preventing internal leakages.
+- **Missing Authentication Middleware**: FIXED. Implemented `verifyJWT` and `verifyAdmin` middlewares in `server/src/middlewares/auth.middleware.js` and applied them to all private and administrative routes.
+- **Missing Authorization**: FIXED. Updated controllers to verify that users can only access or modify their own data, with administrative overrides where appropriate.
+- **Lack of Security Headers**: FIXED. Integrated `helmet` middleware into `server/src/app.js` to set essential security-related HTTP headers.
+- **Permissive CORS Policy**: FIXED. Restricted CORS policy to use the `CORS_ORIGIN` environment variable.
+- **No Rate Limiting**: FIXED. Implemented `express-rate-limit` on sensitive routes (login, register, send-otp) to protect against brute-force and DoS attacks.
+
+## 6. Architecture & State Management (RESOLVED)
+- **Scattered LocalStorage Usage**: FIXED. Centralized session management in `AuthContext.jsx` and refactored components to use the `useAuth` hook instead of direct `localStorage` access.
+- **Client-Side Security (XSS)**: IMPROVED. Centralized storage management in `AuthContext.jsx` provides a better foundation for further security hardening (e.g., transitioning to HttpOnly cookies or more secure token handling).
+- **Lack of Request Validation Schemas**: FIXED. Implemented a validation layer using `zod` and a `validate` middleware, with schemas for user registration, login, product creation, and category management.
 
 ---
 *Updated by Gemini CLI on 2026-06-11*

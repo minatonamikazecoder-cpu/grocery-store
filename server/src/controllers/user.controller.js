@@ -210,12 +210,18 @@ const getAllUsers = asyncHandler(async (req, res) => {
 
 // Get Single User
 const getUserById = asyncHandler(async (req, res) => {
+    if (req.user._id.toString() !== req.params.id && req.user.role !== 'Admin') {
+        throw new ApiError(403, "Unauthorized access");
+    }
     const user = await User.findById(req.params.id);
     if (!user) throw new ApiError(404, "User not found");
     res.json(user);
 });
 
 const updateUser = asyncHandler(async (req, res) => {
+    if (req.user._id.toString() !== req.params.id && req.user.role !== 'Admin') {
+        throw new ApiError(403, "Unauthorized access");
+    }
     const { firstName, lastName, mobile, status, password } = req.body;
     let { profilePicture } = req.body;
 

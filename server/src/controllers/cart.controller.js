@@ -5,6 +5,10 @@ const ApiError = require("../utils/ApiError");
 const addToCart = asyncHandler(async (req, res) => {
     const { userId, productId, quantity } = req.body;
 
+    if (req.user._id.toString() !== userId.toString() && req.user.role !== 'Admin') {
+        throw new ApiError(403, "Unauthorized access");
+    }
+
     let cart = await Cart.findOne({ userId });
     if (!cart) {
         cart = new Cart({ userId, items: [{ productId, quantity }] });
@@ -25,6 +29,9 @@ const addToCart = asyncHandler(async (req, res) => {
 });
 
 const getCartByUserId = asyncHandler(async (req, res) => {
+    if (req.user._id.toString() !== req.params.userId && req.user.role !== 'Admin') {
+        throw new ApiError(403, "Unauthorized access");
+    }
     const cart = await Cart.findOne({ userId: req.params.userId }).populate(
         "items.productId"
     );
@@ -35,6 +42,9 @@ const getCartByUserId = asyncHandler(async (req, res) => {
 });
 
 const updateCartItem = asyncHandler(async (req, res) => {
+    if (req.user._id.toString() !== req.params.userId && req.user.role !== 'Admin') {
+        throw new ApiError(403, "Unauthorized access");
+    }
     const { productId, quantity } = req.body;
     const cart = await Cart.findOne({ userId: req.params.userId });
 
@@ -55,6 +65,9 @@ const updateCartItem = asyncHandler(async (req, res) => {
 });
 
 const removeCartItem = asyncHandler(async (req, res) => {
+    if (req.user._id.toString() !== req.params.userId && req.user.role !== 'Admin') {
+        throw new ApiError(403, "Unauthorized access");
+    }
     const { productId } = req.body;
     const cart = await Cart.findOne({ userId: req.params.userId });
 
@@ -75,6 +88,9 @@ const removeCartItem = asyncHandler(async (req, res) => {
 });
 
 const clearCart = asyncHandler(async (req, res) => {
+    if (req.user._id.toString() !== req.params.userId && req.user.role !== 'Admin') {
+        throw new ApiError(403, "Unauthorized access");
+    }
     const cart = await Cart.findOne({ userId: req.params.userId });
 
     if (!cart) {
