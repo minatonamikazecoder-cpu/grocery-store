@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api";
 import Swal from "sweetalert2";
 import DataTable from "react-data-table-component";
 
@@ -29,7 +29,7 @@ const ProductList = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const res = await axios.get("http://localhost:8000/products");
+                const res = await api.get("/products");
                 setProducts(res.data);
             } catch (err) {
                 console.error("Failed to fetch products:", err);
@@ -50,7 +50,7 @@ const ProductList = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axios.delete(`http://localhost:8000/products/${productId}`);
+                    await api.delete(`/products/${productId}`);
                     setProducts(products.filter(p => p._id !== productId));
                     Swal.fire("Deleted!", "Product has been deleted.", "success");
                 } catch (err) {

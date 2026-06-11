@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import axios from "axios";
+import api from "../../utils/api";
 import { toast } from "react-toastify";
 import DataTable from "react-data-table-component";
 
@@ -19,7 +19,7 @@ const Cart = () => {
   const fetchCart = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get(`http://localhost:8000/cart/${userId}`);
+      const { data } = await api.get(`/cart/${userId}`);
       const cartItems = data.items.map(item => ({
         id: item.productId._id,
         name: item.productId.productName,
@@ -53,8 +53,8 @@ const Cart = () => {
       confirmButtonText: "Yes, remove it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        axios
-          .delete(`http://localhost:8000/cart/${userId}`, {
+        api
+          .delete(`/cart/${userId}`, {
             data: { productId },
           })
           .then(() => {
@@ -79,8 +79,8 @@ const Cart = () => {
     const newQuantity = updatedItem.quantity + amount;
     if (newQuantity < 1) return;
 
-    axios
-      .put(`http://localhost:8000/cart/${userId}`, {
+    api
+      .put(`/cart/${userId}`, {
         productId: id,
         quantity: newQuantity,
       })

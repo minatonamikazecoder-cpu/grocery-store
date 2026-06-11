@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from "../../../utils/api";
 import { ToastContainer, toast } from 'react-toastify';
 import { useAuth } from '../../../contexts/AuthContext'; // Adjust path as needed
 
@@ -105,7 +105,7 @@ const UpdateProfileForm = ({ userData, onUpdate }) => {
         setLoading(true);
     
         try {
-            const response = await axios.put(`http://localhost:8000/users/${user._id}`, submitData);
+            const response = await api.put(`/users/${user._id}`, submitData);
             if (response.data) {
                 toast.success("Profile updated successfully!");
     

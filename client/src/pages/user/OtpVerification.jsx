@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api";
 
 const OtpVerification = () => {
     // Get the email from localStorage where it was stored
@@ -56,7 +56,7 @@ const OtpVerification = () => {
         }
 
         try {
-            const response = await axios.post("http://localhost:8000/users/verify-otp", {
+            const response = await api.post("/users/verify-otp", {
                 email,
                 otp,
             });
@@ -79,7 +79,7 @@ const OtpVerification = () => {
 
         try {
             // Send OTP resend request to backend
-            const response = await axios.post("http://localhost:8000/users/send-otp", {
+            const response = await api.post("/users/send-otp", {
                 email,
             });
 

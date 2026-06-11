@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../utils/api";
 
 const UpdateUser = () => {
     const { id } = useParams();
@@ -21,7 +21,7 @@ const UpdateUser = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/users/${id}`);
+                const response = await api.get(`/users/${id}`);
                 setFormData({
                     firstName: response.data.firstName,
                     lastName: response.data.lastName,
@@ -106,7 +106,7 @@ const UpdateUser = () => {
                 submission.append("profilePicture", formData.userImage);
             }
 
-            await axios.put(`http://localhost:8000/users/${id}`, submission, {
+            await api.put(`/users/${id}`, submission, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },

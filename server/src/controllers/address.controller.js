@@ -1,51 +1,41 @@
-const Address = require('../models/Address');
+const Address = require("../models/Address");
+const asyncHandler = require("../utils/asyncHandler");
+const ApiError = require("../utils/ApiError");
 
-const addAddress = async (req, res) => {
-  try {
+const addAddress = asyncHandler(async (req, res) => {
     const address = new Address(req.body);
     const savedAddress = await address.save();
     res.status(201).json(savedAddress);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to add address', error });
-  }
-};
+});
 
-const getAddressById = async (req, res) => {
-  try {
+const getAddressById = asyncHandler(async (req, res) => {
     const address = await Address.findById(req.params.addressId);
-    if (!address) return res.status(404).json({ message: 'Address not found' });
+    if (!address) {
+        throw new ApiError(404, "Address not found");
+    }
     res.status(200).json(address);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch address', error });
-  }
-};
+});
 
-const getAddressesByUserId = async (req, res) => {
-  try {
+const getAddressesByUserId = asyncHandler(async (req, res) => {
     const addresses = await Address.find({ userId: req.params.userId });
     res.status(200).json(addresses);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch addresses', error });
-  }
-};
+});
 
-const updateAddress = async (req, res) => {
-  try {
+const updateAddress = asyncHandler(async (req, res) => {
     const updatedAddress = await Address.findByIdAndUpdate(
-      req.params.addressId,
-      { $set: req.body },
-      { new: true }
+        req.params.addressId,
+        { $set: req.body },
+        { new: true }
     );
-    if (!updatedAddress) return res.status(404).json({ message: 'Address not found' });
+    if (!updatedAddress) {
+        throw new ApiError(404, "Address not found");
+    }
     res.status(200).json(updatedAddress);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to update address', error });
-  }
-};
+});
 
 module.exports = {
-  addAddress,
-  getAddressById,
-  getAddressesByUserId,
-  updateAddress
+    addAddress,
+    getAddressById,
+    getAddressesByUserId,
+    updateAddress,
 };

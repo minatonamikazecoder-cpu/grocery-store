@@ -21,7 +21,6 @@ export default function SearchResults() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Selected Filters:", filters);
   };
 
   const handleWishlistClick = () => {

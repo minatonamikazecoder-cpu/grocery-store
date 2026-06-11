@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api";
 import { useAuth } from "../../contexts/AuthContext"; // Adjust path if needed
 
 const Login = () => {
@@ -51,14 +51,13 @@ const Login = () => {
 
 try {
     setLoading(true);
-    const res = await axios.post("http://localhost:8000/users/login", formData);
+    const res = await api.post("/users/login", formData);
 
     toast.success("Login successful!");
     localStorage.setItem("token", res.data.token);
     localStorage.setItem("user", JSON.stringify(res.data.user));
-    console.log(res.data.user);
 
-    login(res.data.token, res.data.user); // ✅ Update context state
+    login(res.data.token, res.data.user);
 
     if (res.data.user.role === "admin") {
         navigate("/admin");

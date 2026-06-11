@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api";
 import { toast } from "react-toastify";
 
 const VerifyEmail = () => {
@@ -17,7 +17,7 @@ const VerifyEmail = () => {
             }
 
             try {
-                const response = await axios.get(`http://localhost:8000/users/verify-email?token=${token}`);
+                const response = await api.get(`/users/verify-email?token=${token}`);
                 toast.success(response.data.message || "Email verified successfully!");
                 navigate("/login");
             } catch (error) {

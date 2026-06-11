@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import BillingAddressForm from "./BillingAddressForm";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../../utils/api";
 import { toast } from "react-toastify";
 
 const Checkout = () => {
@@ -54,11 +54,10 @@ setDiscountAmount(offer.maxDiscount);
 	};
 	const fetchAddresses = async (userId) => {
 		try {
-			const res = await axios.get(
-				`http://localhost:8000/addresses/user/${userId}`
+			const res = await api.get(
+				`/addresses/user/${userId}`
 			);
-			console.log(res);
-			setAddresses(res.data || []);
+			setAddresses(res.data);
 		} catch (err) {
 			console.error("Failed to fetch addresses", err);
 		}
@@ -66,7 +65,7 @@ setDiscountAmount(offer.maxDiscount);
 
 	const fetchCart = async (userId) => {
 		try {
-			const res = await axios.get(`http://localhost:8000/cart/${userId}`);
+			const res = await api.get(`/cart/${userId}`);
 			setCartItems(res.data.items || []);
 		} catch (err) {
 			console.error("Failed to fetch cart items", err);
@@ -86,8 +85,8 @@ setDiscountAmount(offer.maxDiscount);
 		}
 
 		try {
-            const stockCheckRes = await axios.get(
-			`http://localhost:8000/orders/check-stock/${userId}`
+            const stockCheckRes = await api.get(
+			`/orders/check-stock/${userId}`
 		);
 		if (stockCheckRes.status=== 400 || stockCheckRes.status=== 500) {
 			toast.error(stockCheckRes.data.message);
@@ -96,8 +95,8 @@ setDiscountAmount(offer.maxDiscount);
 		}
 
 			// Create Razorpay order via backend
-			const { data } = await axios.post(
-				"http://localhost:8000/payment/create-order",
+			const { data } = await api.post(
+				"/payment/create-order",
 				{
 					amount: totalPrice, // amount in paise
 				}
@@ -129,8 +128,8 @@ setDiscountAmount(offer.maxDiscount);
 				},
 				handler: async function (response) {
 					try {
-						const confirmRes = await axios.post(
-							"http://localhost:8000/orders/checkout",
+						const confirmRes = await api.post(
+							"/orders/checkout",
 							{
 								userId,
 								addressId: selectedAddress,

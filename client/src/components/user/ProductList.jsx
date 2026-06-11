@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../utils/api";
 import { useAuth } from "../../contexts/AuthContext";
 
 const ProductList = ({ products }) => {
@@ -26,7 +26,7 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
       if (!user) return;
       setLoadingWishlist(true);
       try {
-        const response = await axios.get(`http://localhost:8000/wishlist/${user._id}`);
+        const response = await api.get(`/wishlist/${user._id}`);
         const productIds = response.data.wishlist?.productIds.map(p => p._id);
         setWishlist(productIds || []);
       } catch (error) {
@@ -47,13 +47,13 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     try {
       if (wishlist.includes(productId)) {
-        await axios.delete(`http://localhost:8000/wishlist/${user._id}/remove`, {
+        await api.delete(`/wishlist/${user._id}/remove`, {
           data: { productId },
         });
         setWishlist((prev) => prev.filter((id) => id !== productId));
         toast.info("Product removed from wishlist.");
       } else {
-        const res = await axios.post(`http://localhost:8000/wishlist/${user._id}/add`, {
+        const res = await api.post(`/wishlist/${user._id}/add`, {
           productId,
         });
         setWishlist((prev) => [...prev, productId]);
@@ -75,7 +75,7 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     setAddingToCartId(productId);
     try {
-      const response = await axios.post(`http://localhost:8000/cart`, {
+      const response = await api.post(`/cart`, {
         userId: user._id,
         productId,
         quantity: 1,

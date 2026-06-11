@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import axios from "axios";
+import api from "../../utils/api";
 const AddOrder = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -31,33 +31,30 @@ const AddOrder = () => {
         pinCode: "",
         phone: "",
         shippingCharge: "",
-        status: "",
-    });
+        setErrors(newErrors);
+        };
 
-        // ✅ new state for users and products
         const [users, setUsers] = useState([]);
         const [products, setProducts] = useState([]);
-    
-        // ✅ fetch users and products on component mount
+
         useEffect(() => {
-            fetchUsers();
-            fetchProducts();
+        fetchUsers();
+        fetchProducts();
         }, []);
     
         const fetchUsers = async () => {
             try {
-                const res = await axios.get('http://localhost:8000/users'); // 🔁 update API route as per your backend
-                console.log(res.data);
+                const res = await api.get('/users');
                 setUsers(res.data);
             } catch (error) {
                 console.error("Failed to fetch users:", error);
                 toast.error("Failed to load users.");
             }
         };
-    
+
         const fetchProducts = async () => {
             try {
-                const res = await axios.get('http://localhost:8000/products'); // 🔁 update API route as per your backend
+                const res = await api.get('/products');
                 setProducts(res.data);
             } catch (error) {
                 console.error("Failed to fetch products:", error);
@@ -177,9 +174,8 @@ const AddOrder = () => {
                     pincode: formData.pinCode,
                     phone: formData.phone
                 };
-                console.log(addressData);
                 // Send a POST request to create the address in the backend
-                const addressResponse = await axios.post('http://localhost:8000/addresses', addressData);
+                const addressResponse = await api.post('/addresses', addressData);
                 if (addressResponse.data._id) {
                     // Step 3: Get the address ID from the response
                     const addressId = addressResponse.data._id;
@@ -193,9 +189,8 @@ const AddOrder = () => {
                         shippingCharge: formData.shippingCharge,
                         delAddressId: addressId
                     };
-                    console.log(orderData);
                     // Step 5: Add the order using the addressId
-                    const orderResponse = await axios.post('http://localhost:8000/orders', orderData);
+                    const orderResponse = await api.post('/orders', orderData);
     
                     if (orderResponse.status === 201) {
                         toast.success("Order added successfully!");

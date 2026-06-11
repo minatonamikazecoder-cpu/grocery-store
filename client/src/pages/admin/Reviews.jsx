@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import DataTable from "react-data-table-component";
-import axios from "axios";
+import api from "../../utils/api";
 
 const Reviews = () => {
   const [reviews, setReviews] = useState([]);
@@ -18,7 +18,7 @@ const Reviews = () => {
 
   const fetchReviews = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/reviews"); // Replace with your actual endpoint
+      const res = await api.get("/reviews");
       setReviews(res.data);
       setFilteredReviews(res.data);
     } catch (err) {
@@ -47,7 +47,7 @@ const Reviews = () => {
 
     if (confirm.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:8000/reviews/${id}`);
+        await api.delete(`/reviews/${id}`);
         fetchReviews();
         Swal.fire("Deleted!", "Review has been deleted.", "success");
       } catch (err) {
@@ -64,7 +64,7 @@ const Reviews = () => {
     }
 
     try {
-      await axios.put(`http://localhost:8000/reviews/${selectedReview._id}/reply`, {
+      await api.put(`/reviews/${selectedReview._id}/reply`, {
         reply,
       });
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../utils/api";
 import { useNavigate } from "react-router-dom";
 
 const UpdateBanner = () => {
@@ -21,8 +21,8 @@ const UpdateBanner = () => {
 	useEffect(() => {
 		const fetchBanner = async () => {
 			try {
-				const res = await axios.get(
-					`http://localhost:8000/banners/${id}`
+				const res = await api.get(
+					`/banners/${id}`
 				);
 				const banner = res.data;
 
@@ -101,7 +101,7 @@ const UpdateBanner = () => {
 				data.append("bannerImage", formData.bannerImage);
 			}
 
-			await axios.put(`http://localhost:8000/banners/${id}`, data);
+			await api.put(`/banners/${id}`, data);
 			toast.success("Banner updated successfully!");
 			navigate("/admin/banners");
 		} catch (err) {

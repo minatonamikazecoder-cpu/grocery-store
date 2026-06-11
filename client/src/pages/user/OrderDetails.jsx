@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api";
 import { toast } from "react-toastify";
 
 const OrderDetails = () => {
@@ -11,7 +11,7 @@ const OrderDetails = () => {
 
     const fetchOrderDetails = async () => {
         try {
-            const res = await axios.get(`http://localhost:8000/orders/${orderId}`);
+            const res = await api.get(`/orders/${orderId}`);
             const data = res.data;
 
             const {

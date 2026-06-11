@@ -2,7 +2,7 @@
     import { Link, useNavigate } from "react-router-dom";
     import Swal from "sweetalert2";
     import DataTable from "react-data-table-component";
-    import axios from "axios";
+    import api from "../../utils/api";
 
     const Users = () => {
         const navigate = useNavigate();
@@ -12,7 +12,7 @@
         const fetchUsers = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get("http://localhost:8000/users");
+                const response = await api.get("/users");
                 setUsers(response.data || []);
             } catch (error) {
                 console.error("Error fetching users:", error);
@@ -34,7 +34,7 @@
 
             if (result.isConfirmed) {
                 try {
-                    await axios.delete(`http://localhost:8000/users/${userId}`);
+                    await api.delete(`/users/${userId}`);
                     Swal.fire("Deleted!", "User has been removed.", "success");
                     fetchUsers(); // Refresh list
                 } catch (error) {

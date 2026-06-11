@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../utils/api";
 
 const UpdateOrder = () => {
 	const navigate = useNavigate();
@@ -48,7 +48,7 @@ const UpdateOrder = () => {
 
 	const fetchUsers = async () => {
 		try {
-			const res = await axios.get("http://localhost:8000/users");
+			const res = await api.get("/users");
 			setUsers(res.data);
 		} catch (error) {
 			console.error("Failed to fetch users:", error);
@@ -58,7 +58,7 @@ const UpdateOrder = () => {
 
 	const fetchProducts = async () => {
 		try {
-			const res = await axios.get("http://localhost:8000/products");
+			const res = await api.get("/products");
 			setProducts(res.data);
 		} catch (error) {
 			console.error("Failed to fetch products:", error);
@@ -68,8 +68,8 @@ const UpdateOrder = () => {
 
 	const fetchOrder = async () => {
 		try {
-			const res = await axios.get(
-				`http://localhost:8000/orders/${orderId}`
+			const res = await api.get(
+				`/orders/${orderId}`
 			);
 			const { order, orderItems } = res.data;
 
@@ -246,8 +246,8 @@ const UpdateOrder = () => {
 					phone: formData.phone,
 				};
 
-				const addressResponse = await axios.post(
-					`http://localhost:8000/addresses`,
+				const addressResponse = await api.post(
+					`/addresses`,
 					addressData
 				);
 
@@ -261,8 +261,8 @@ const UpdateOrder = () => {
 						delAddressId: addressResponse.data._id,
 					};
 
-					const orderResponse = await axios.put(
-						`http://localhost:8000/orders/${orderId}`,
+					const orderResponse = await api.put(
+						`/orders/${orderId}`,
 						orderData
 					);
 

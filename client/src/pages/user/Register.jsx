@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api";
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -68,7 +68,7 @@ const Register = () => {
                 authType: "Email"
             };
 
-            const response = await axios.post("http://localhost:8000/users/register", payload);
+            const response = await api.post("/users/register", payload);
 
             toast.success(response.data.message || "Account created successfully!");
         } catch (error) {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api";
 
 const ViewOrder = () => {
     const { orderId } = useParams();
@@ -11,11 +11,10 @@ const ViewOrder = () => {
     useEffect(() => {
         const fetchOrder = async () => {
             try {
-                const res = await axios.get(`http://localhost:8000/orders/${orderId}`);
+                const res = await api.get(`/orders/${orderId}`);
                 const { order, orderItems } = res.data;
                 setOrder(order);
                 setProducts(orderItems || []);
-                console.log("Order fetched successfully:", order);
             } catch (error) {
                 console.error("Failed to fetch order:", error);
             } finally {

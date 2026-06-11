@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../utils/api";
 
 const AddReview = () => {
     const [formData, setFormData] = useState({
@@ -20,8 +20,8 @@ const AddReview = () => {
         const fetchData = async () => {
             try {
                 const [productRes, userRes] = await Promise.all([
-                    axios.get("http://localhost:8000/products"),
-                    axios.get("http://localhost:8000/users")
+                    api.get("/products"),
+                    api.get("/users")
                 ]);
                 setProducts(productRes.data);
                 setUsers(userRes.data);
@@ -66,7 +66,7 @@ const AddReview = () => {
 
         if (Object.values(newErrors).every((err) => !err)) {
             try {
-                await axios.post("http://localhost:8000/reviews", formData);
+                await api.post("/reviews", formData);
                 toast.success("Review submitted successfully!");
                 navigate("/admin/reviews");
             } catch (err) {

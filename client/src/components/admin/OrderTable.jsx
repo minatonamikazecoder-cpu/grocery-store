@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api";
 import Swal from "sweetalert2";
 import DataTable from "react-data-table-component";
 
@@ -10,7 +10,7 @@ const OrderTable = () => {
 
   const fetchOrders = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/orders/active");
+      const response = await api.get("/orders/active");
       setOrders(response.data.orders);
     } catch (error) {
       console.error("Failed to fetch orders:", error);
@@ -33,7 +33,7 @@ const OrderTable = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.patch(`http://localhost:8000/orders/${orderId}/delete`);
+          await api.patch(`/orders/${orderId}/delete`);
           Swal.fire("Deleted!", "Order has been deleted.", "success");
           fetchOrders();
         } catch (error) {

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../utils/api";
 
 const UpdateCategory = () => {
     const { id } = useParams(); // Get the category ID from URL
@@ -21,7 +21,7 @@ const UpdateCategory = () => {
         const fetchCategory = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`http://localhost:8000/categories/${id}`);
+                const response = await api.get(`/categories/${id}`);
                 setFormData({
                     categoryName: response.data.name,
                     color: response.data.color,
@@ -102,7 +102,7 @@ const UpdateCategory = () => {
         }
 
         try {
-            await axios.put(`http://localhost:8000/categories/${id}`, updatedCategory, {
+            await api.put(`/categories/${id}`, updatedCategory, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },

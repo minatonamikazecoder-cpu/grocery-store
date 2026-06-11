@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from "../../utils/api";
 import { toast } from 'react-toastify';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -12,7 +12,7 @@ const WishlistTable = ({ userId }) => {
   // Fetch wishlist
 const fetchWishlist = async () => {
   try {
-    const res = await axios.get(`http://localhost:8000/wishlist/${userId}`);
+    const res = await api.get(`/wishlist/${userId}`);
     const productIds = res.data?.wishlist?.productIds || [];
     setWishlist(productIds);
     updateWishlistCount(productIds.length);
@@ -32,7 +32,7 @@ const fetchWishlist = async () => {
   // Handle delete from wishlist
   const handleDelete = async (productId) => {
     try {
-      await axios.delete(`http://localhost:8000/wishlist/${userId}/remove`, {
+      await api.delete(`/wishlist/${userId}/remove`, {
         data: { productId }
       });
       toast.success("Product removed from wishlist!");
@@ -53,7 +53,7 @@ const fetchWishlist = async () => {
 
     setAddingToCartId(productId);
     try {
-      const response = await axios.post(`http://localhost:8000/cart`, {
+      const response = await api.post(`/cart`, {
         userId,
         productId,
         quantity: 1,

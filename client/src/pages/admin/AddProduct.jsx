@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../utils/api";
 
 const AddProduct = () => {
     const navigate = useNavigate();
@@ -25,7 +25,7 @@ const AddProduct = () => {
         // Fetch categories from backend
         const fetchCategories = async () => {
             try {
-                const res = await axios.get("http://localhost:8000/categories");
+                const res = await api.get("/categories");
                 setCategories(res.data);
             } catch (err) {
                 toast.error("Failed to load categories.");
@@ -108,7 +108,7 @@ const AddProduct = () => {
             data.append("categoryId", formData.productCategory);
             data.append("productImage", formData.productImage);
 
-            await axios.post("http://localhost:8000/products", data, {
+            await api.post("/products", data, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 

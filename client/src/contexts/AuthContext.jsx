@@ -1,6 +1,6 @@
 // src/context/AuthContext.js
 import { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/api";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data } = await axios.get("http://localhost:8000/products/");
+        const { data } = await api.get("/products/");
         setAllProducts(data);
         setFilteredProducts(data); // default view
       } catch (error) {
@@ -121,12 +121,12 @@ export const AuthProvider = ({ children }) => {
 	const fetchInitialCounts = async (userId) => {
   try {
     // Fetch Cart
-    const cartRes = await axios.get(`http://localhost:8000/cart/${userId}`);
+    const cartRes = await api.get(`/cart/${userId}`);
     if (cartRes?.data?.items?.length)
       updateCartCount(cartRes.data.items.length);
 
     // Fetch Wishlist
-    const wishlistRes = await axios.get(`http://localhost:8000/wishlist/${userId}`);
+    const wishlistRes = await api.get(`/wishlist/${userId}`);
     if (wishlistRes?.data?.wishlist?.productIds?.length)
       updateWishlistCount(
         wishlistRes.data?.wishlist?.productIds?.length || 0

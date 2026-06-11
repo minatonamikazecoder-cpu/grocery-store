@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api";
 
 const ResetPassword = () => {
     const [formData, setFormData] = useState({
@@ -61,7 +61,7 @@ const ResetPassword = () => {
 
         try {
             // Send the password reset request to the backend
-            const response = await axios.post("http://localhost:8000/users/reset-password", {
+            const response = await api.post("/users/reset-password", {
                 email,
                 newPassword: formData.newPassword
             });

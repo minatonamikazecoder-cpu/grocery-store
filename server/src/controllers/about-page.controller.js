@@ -1,50 +1,42 @@
-const AboutPage = require('../models/AboutPage');
+const AboutPage = require("../models/AboutPage");
+const asyncHandler = require("../utils/asyncHandler");
+const ApiError = require("../utils/ApiError");
 
-const getAboutPage = async (req, res) => {
-  try {
+const getAboutPage = asyncHandler(async (req, res) => {
     let aboutPage = await AboutPage.findOne();
     if (!aboutPage) {
-      aboutPage = { content: '' };
+        aboutPage = { content: "" };
     }
     res.status(200).json({
-      message: 'About page retrieved successfully',
-      data: aboutPage
+        message: "About page retrieved successfully",
+        data: aboutPage,
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server Error', error: error.message });
-  }
-};
+});
 
-const updateAboutPage = async (req, res) => {
-  try {
+const updateAboutPage = asyncHandler(async (req, res) => {
     const { content } = req.body;
 
     if (!content) {
-      return res.status(400).json({ message: 'Content is required' });
+        throw new ApiError(400, "Content is required");
     }
 
     let aboutPage = await AboutPage.findOne();
     if (!aboutPage) {
-      aboutPage = new AboutPage({ content });
-      await aboutPage.save();
-      return res.status(201).json({
-        message: 'About page created successfully',
-        data: aboutPage
-      });
+        aboutPage = new AboutPage({ content });
+        await aboutPage.save();
+        return res.status(201).json({
+            message: "About page created successfully",
+            data: aboutPage,
+        });
     }
 
     aboutPage.content = content;
     await aboutPage.save();
 
     res.status(200).json({
-      message: 'About page updated successfully',
-      data: aboutPage
+        message: "About page updated successfully",
+        data: aboutPage,
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server Error', error: error.message });
-  }
-};
+});
 
 module.exports = { getAboutPage, updateAboutPage };

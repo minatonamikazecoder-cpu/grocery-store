@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import axios from "axios";
+import api from "../../utils/api";
 import DataTable from "react-data-table-component";
 
 const Responses = () => {
@@ -17,7 +17,7 @@ const Responses = () => {
     const fetchResponses = async () => {
       setLoading(true);
       try {
-        const res = await axios.get("http://localhost:8000/responses");
+        const res = await api.get("/responses");
         setResponses(res.data);
       } catch (error) {
         Swal.fire("Error", "Failed to fetch responses", "error");
@@ -41,7 +41,7 @@ const Responses = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://localhost:8000/responses/${id}`);
+          await api.delete(`/responses/${id}`);
           setResponses(responses.filter((res) => res._id !== id));
           Swal.fire("Deleted!", "Response deleted successfully.", "success");
         } catch (error) {
@@ -58,8 +58,8 @@ const Responses = () => {
     }
 
     try {
-      const res = await axios.put(
-        `http://localhost:8000/responses/${selectedResponse._id}/reply`,
+      const res = await api.put(
+        `/responses/${selectedResponse._id}/reply`,
         { reply }
       );
       setResponses((prev) =>

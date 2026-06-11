@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../utils/api";
 
 const UpdateOffer = () => {
     const { id } = useParams();
@@ -23,7 +23,7 @@ const UpdateOffer = () => {
     useEffect(() => {
         const fetchOffer = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/offers/${id}`);
+                const response = await api.get(`/offers/${id}`);
                 const data = response.data;
 
                 setFormData({
@@ -102,7 +102,7 @@ const UpdateOffer = () => {
         }
 
         try {
-            await axios.put(`http://localhost:8000/offers/${id}`, {
+            await api.put(`/offers/${id}`, {
                 offerDescription: formData.offerDescription,
                 offerCode: formData.offerCode,
                 discount: parseFloat(formData.discount),

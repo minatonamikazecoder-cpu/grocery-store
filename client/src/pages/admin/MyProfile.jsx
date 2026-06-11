@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../utils/api";
 import { useAuth } from "../../contexts/AuthContext";
 
 const MyProfile = () => {
@@ -30,7 +30,7 @@ const MyProfile = () => {
 
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/users/${user._id}`);
+        const response = await api.get(`/users/${user._id}`);
         setProfileForm({
           firstName: response.data.firstName || "",
           lastName: response.data.lastName || "",
@@ -122,7 +122,7 @@ const MyProfile = () => {
     });
 
     try {
-      const response = await axios.put(`http://localhost:8000/users/${user._id}`, formData, {
+      const response = await api.put(`/users/${user._id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       if (response.data) {
@@ -149,12 +149,11 @@ const MyProfile = () => {
     }
 
     try {
-      const response = await axios.put("http://localhost:8000/users/update-password", {
+      const response = await api.put("/users/update-password", {
         email: user.email,
         currentPassword: passwordForm.currentPassword,
         newPassword: passwordForm.newPassword,
       });
-      console.log(response);
       
       if (response.data) {
         toast.success("Password updated successfully!");

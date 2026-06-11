@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../utils/api";
 import ProductList from "../../components/user/ProductList";
 const Home = () => {
   const [banners, setBanners] = useState([]);
@@ -18,26 +18,26 @@ const Home = () => {
   }, []);
 
   const fetchBanners = async () => {
-    const res = await axios.get("http://localhost:8000/banners");
+    const res = await api.get("/banners");
     setBanners(res.data);
   };
 
   const fetchOffers = async () => {
-    const res = await axios.get("http://localhost:8000/offers");
+    const res = await api.get("/offers");
     setOffers(res.data.filter((offer) => offer.activeStatus));
   };
 
   const fetchTrendingProducts = async () => {
-    const res = await axios.get("http://localhost:8000/products/trending");
+    const res = await api.get("/products/trending");
     setTrendingProducts(res.data);
   };
   const fetchLatestProducts = async () => {
-    const res = await axios.get("http://localhost:8000/products/latest");
+    const res = await api.get("/products/latest");
     setLatestProducts(res.data);
   };
 
   const fetchCategories = async () => {
-    const res = await axios.get("http://localhost:8000/categories");
+    const res = await api.get("/categories");
     setCategories(res.data);
   };
 

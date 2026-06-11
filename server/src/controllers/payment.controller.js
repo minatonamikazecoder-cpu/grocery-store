@@ -1,24 +1,21 @@
-// controllers/paymentController.js
 const Razorpay = require("razorpay");
+const asyncHandler = require("../utils/asyncHandler");
+const ApiError = require("../utils/ApiError");
 
 const instance = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-exports.createOrder = async (req, res) => {
-  const { amount } = req.body; // Amount in rupees
+exports.createOrder = asyncHandler(async (req, res) => {
+    const { amount } = req.body; // Amount in rupees
 
-  const options = {
-    amount: amount * 100, // Convert to paise
-    currency: "INR",
-    receipt: `receipt_${Date.now()}`,
-  };
+    const options = {
+        amount: amount * 100, // Convert to paise
+        currency: "INR",
+        receipt: `receipt_${Date.now()}`,
+    };
 
-  try {
     const order = await instance.orders.create(options);
     res.status(200).json({ success: true, order });
-  } catch (error) {
-    res.status(500).json({ success: false, error: error.message });
-  }
-};
+});

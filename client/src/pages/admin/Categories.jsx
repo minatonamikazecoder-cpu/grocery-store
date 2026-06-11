@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
-import axios from "axios"; // Import axios
+import api from "../../utils/api"; // Import axios
 import DataTable from 'react-data-table-component'; // Import DataTable component
 
 const Categories = () => {
@@ -15,7 +15,7 @@ const Categories = () => {
     const fetchCategories = async () => {
       setLoading(true); // Set loading to true while fetching data
       try {
-        const response = await axios.get(`http://localhost:8000/categories`); // Adjust URL if needed
+        const response = await api.get(`/categories`); // Adjust URL if needed
         setCategories(response.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
@@ -46,7 +46,7 @@ const Categories = () => {
       if (result.isConfirmed) {
         setDeletingCategoryId(categoryId); // Set the category being deleted
         try {
-          await axios.delete(`http://localhost:8000/categories/${categoryId}`);
+          await api.delete(`/categories/${categoryId}`);
           setCategories(categories.filter(category => category._id !== categoryId));
           Swal.fire({
             title: "Deleted!",

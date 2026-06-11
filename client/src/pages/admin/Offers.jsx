@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import axios from "axios";
+import api from "../../utils/api";
 import DataTable from "react-data-table-component";
 
 const Offers = () => {
@@ -13,7 +13,7 @@ const Offers = () => {
   const fetchOffers = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:8000/offers");
+      const response = await api.get("/offers");
       setOffers(response.data);
     } catch (error) {
       console.error("Error fetching offers:", error);
@@ -39,7 +39,7 @@ const Offers = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await axios.delete(`http://localhost:8000/offers/${id}`);
+          await api.delete(`/offers/${id}`);
           Swal.fire("Deleted!", "Offer has been deleted.", "success");
           fetchOffers(); // refresh the data
         } catch (err) {

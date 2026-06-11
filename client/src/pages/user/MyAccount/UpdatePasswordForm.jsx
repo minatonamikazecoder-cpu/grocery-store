@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import axios from 'axios';
+import api from "../../../utils/api";
 
 const UpdatePasswordForm = ({email}) => {
     const [formData, setFormData] = useState({
@@ -78,7 +78,7 @@ const UpdatePasswordForm = ({email}) => {
         setLoading(true);
 
         try {
-            const response = await axios.put("http://localhost:8000/users/update-password", {
+            const response = await api.put("/users/update-password", {
                 email,
                 currentPassword: formData.currentPassword,
                 newPassword: formData.newPassword

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../utils/api";
 
 const AddOffer = () => {
     const navigate = useNavigate();
@@ -90,7 +90,7 @@ const AddOffer = () => {
                 endDate: formData.endDate,
             };
 
-            await axios.post("http://localhost:8000/offers", payload);
+            await api.post("/offers", payload);
 
             toast.success("Offer added successfully!");
             setFormData({

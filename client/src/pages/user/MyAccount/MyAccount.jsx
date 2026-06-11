@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from "../../../utils/api";
 import UpdatePasswordForm from './UpdatePasswordForm';
 import UpdateProfileForm from './UpdateProfileForm';
 import WishlistTable from '../../../components/user/WishlistTable';
@@ -21,7 +21,7 @@ const MyAccount = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.get(`http://localhost:8000/users/${user._id}`);
+                const response = await api.get(`/users/${user._id}`);
                 setUserData(response.data);
             } catch (error) {
                 console.error('Error fetching user data:', error);

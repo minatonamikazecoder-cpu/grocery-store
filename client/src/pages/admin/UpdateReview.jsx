@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../utils/api";
 
 const UpdateReview = () => {
   const [formData, setFormData] = useState({
@@ -18,7 +18,7 @@ const UpdateReview = () => {
     // Fetch review data from backend
     const fetchReview = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/reviews/${id}`);
+        const response = await api.get(`/reviews/${id}`);
         const reviewData = response.data;
 
         // Set fetched review data to form fields
@@ -65,8 +65,8 @@ const UpdateReview = () => {
     if (!newErrors.review && !newErrors.rating) {
       try {
         // Send update request to the backend
-        const updatedReview = await axios.put(
-          `http://localhost:8000/reviews/${id}`,
+        const updatedReview = await api.put(
+          `/reviews/${id}`,
           formData
         );
         

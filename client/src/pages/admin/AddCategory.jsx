@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../utils/api";
 
 const AddCategory = () => {
     const [formData, setFormData] = useState({
@@ -86,8 +86,8 @@ const AddCategory = () => {
         categoryData.append("image", formData.image);
 
         try {
-            const response = await axios.post(
-                "http://localhost:8000/categories", 
+            const response = await api.post(
+                "/categories", 
                 categoryData, 
                 {
                     headers: {

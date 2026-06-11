@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../utils/api";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -21,7 +21,7 @@ const Contact = () => {
   useEffect(() => {
     const fetchContactInfo = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/contact");
+        const response = await api.get("/contact");
         setContactInfo(response.data);
       } catch (error) {
         console.error("Failed to fetch contact info", error);
@@ -89,7 +89,7 @@ const Contact = () => {
       };
 
       // Send the form data to the backend
-      await axios.post("http://localhost:8000/responses", responsePayload);
+      await api.post("/responses", responsePayload);
 
       toast.success("Message sent successfully!");
 

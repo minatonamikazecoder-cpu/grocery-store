@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from "../../utils/api";
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
@@ -36,7 +36,7 @@ const ForgotPassword = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post('http://localhost:8000/users/send-otp', { email });
+            const response = await api.post('/users/send-otp', { email });
 
             if (response.data.message === "OTP sent successfully") {
                 // Store email temporarily (for OTP verify page)

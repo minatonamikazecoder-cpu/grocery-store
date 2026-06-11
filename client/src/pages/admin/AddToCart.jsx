@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../utils/api";
 
 const AddToCart = () => {
-    const { userId } = useParams(); // ✅ Get userId from route
+    const { userId } = useParams();
     const [products, setProducts] = useState([]);
     const [addingToCart, setAddingToCart] = useState(false);
 
@@ -21,7 +21,7 @@ const AddToCart = () => {
 
     const fetchProducts = async () => {
         try {
-            const res = await axios.get("http://localhost:8000/products"); // 🔁 Adjust endpoint if needed
+            const res = await api.get("/products");
             setProducts(res.data);
         } catch (error) {
             console.error("Failed to fetch products:", error);
@@ -60,7 +60,7 @@ const AddToCart = () => {
 
         setAddingToCart(true);
         try {
-            await axios.post("http://localhost:8000/cart", {
+            await api.post("/cart", {
                 userId,
                 productId: formData.productId,
                 quantity: formData.quantity,

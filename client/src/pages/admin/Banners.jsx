@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import axios from "axios";
+import api from "../../utils/api";
 import DataTable from "react-data-table-component";
 
 const Banners = () => {
@@ -11,7 +11,7 @@ const Banners = () => {
     useEffect(() => {
         const fetchBanners = async () => {
             try {
-                const response = await axios.get("http://localhost:8000/banners");
+                const response = await api.get("/banners");
                 setBanners(response.data);
             } catch (error) {
                 console.error("Error fetching banners:", error);
@@ -36,7 +36,7 @@ const Banners = () => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axios.delete(`http://localhost:8000/banners/${banner._id}`);
+                    await api.delete(`/banners/${banner._id}`);
                     setBanners(prev => prev.filter(b => b._id !== banner._id));
                     Swal.fire("Deleted!", "Banner deleted successfully.", "success");
                 } catch (error) {

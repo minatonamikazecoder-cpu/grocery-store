@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../utils/api";
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -29,7 +29,7 @@ const [userId, setUserId] = useState(null);
 
     const fetchProduct = async () => {
         try {
-            const res = await axios.get(`http://localhost:8000/products/${id}`);
+            const res = await api.get(`/products/${id}`);
             setProduct(res.data);
         } catch (err) {
             console.error("Failed to fetch product", err);
@@ -38,7 +38,7 @@ const [userId, setUserId] = useState(null);
 
     const fetchReviews = async () => {
         try {
-            const res = await axios.get(`http://localhost:8000/reviews?productId=${id}`);
+            const res = await api.get(`/reviews?productId=${id}`);
             setReviews(res.data);
         } catch (err) {
             console.error("Failed to fetch reviews", err);
@@ -55,14 +55,12 @@ const checkPurchaseAndReview = async () => {
         const user = JSON.parse(localStorage.getItem("user"));
         if (!user) return;
 
-        const res = await axios.get(`http://localhost:8000/orders/has-purchased/${user._id}/${id}`);
+        const res = await api.get(`/orders/has-purchased/${user._id}/${id}`);
         setHasPurchased(res.data.purchased);
 
         // Check if user has already reviewed
-        const reviewRes = await axios.get(`http://localhost:8000/reviews?productId=${id}&userId=${user._id}`);
+        const reviewRes = await api.get(`/reviews?productId=${id}&userId=${user._id}`);
         setHasReviewed(reviewRes.data.length > 0);
-        console.log(res);
-        console.log(reviewRes);
     } catch (err) {
         console.error("Error checking purchase/review", err);
     }
@@ -115,7 +113,7 @@ const checkPurchaseAndReview = async () => {
 
     setAddingToCart(true);
     try {
-      const response = await axios.post(`http://localhost:8000/cart`, {
+      const response = await api.post(`/cart`, {
         userId,
         productId,
         quantity: selectedQuantity,
@@ -150,7 +148,7 @@ const checkPurchaseAndReview = async () => {
             return;
         }
 
-        await axios.post("http://localhost:8000/reviews", {
+        await api.post("/reviews", {
             productId: id,
             userId,
             rating: review.rating,

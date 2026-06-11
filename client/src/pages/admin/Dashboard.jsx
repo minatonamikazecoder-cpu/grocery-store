@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaBox, FaShoppingCart, FaUsers,FaThLarge  } from "react-icons/fa";
 import OrderTable from "../../components/admin/OrderTable";
-import axios from "axios";
+import api from "../../utils/api";
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -15,7 +15,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/dashboard");
+        const res = await api.get("/dashboard");
         if (res.data.success) {
           setStats(res.data.data);
         }

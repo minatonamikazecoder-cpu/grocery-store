@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";  // You will use axios to make the API call
+import api from "../../utils/api";  // You will use axios to make the API call
 
 const AddBanner = () => {
     const [formData, setFormData] = useState({
@@ -76,7 +76,7 @@ const AddBanner = () => {
         formDataToSubmit.append("type", "slider");  
     
         try {
-            await axios.post("http://localhost:8000/banners", formDataToSubmit, {
+            await api.post("/banners", formDataToSubmit, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },

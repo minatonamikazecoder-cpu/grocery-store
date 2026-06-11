@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from "../../utils/api";
 
 const OrdersTable = () => {
   const [userId, setUserId] = useState(null);
@@ -24,9 +24,8 @@ const OrdersTable = () => {
 
     const fetchOrders = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/orders/user/${userId}`);
+        const res = await api.get(`/orders/user/${userId}`);
         setOrders(res.data.orders || []);
-        console.log(orders);
       } catch (err) {
         console.error('Failed to fetch orders:', err);
       } finally {

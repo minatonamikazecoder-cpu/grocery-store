@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../utils/api";
 
 const UpdateProduct = () => {
     const { id } = useParams();
@@ -27,7 +27,7 @@ const UpdateProduct = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const res = await axios.get(`http://localhost:8000/products/${id}`);
+                const res = await api.get(`/products/${id}`);
                 const product = res.data;
 
                 setFormData({
@@ -50,7 +50,7 @@ const UpdateProduct = () => {
 
         const fetchCategories = async () => {
             try {
-                const res = await axios.get("http://localhost:8000/categories");
+                const res = await api.get("/categories");
                 setCategories(res.data);
             } catch (err) {
                 console.error("Failed to fetch categories:", err);
@@ -136,7 +136,7 @@ const UpdateProduct = () => {
                 updateData.append("productImage", formData.productImage);
             }
 
-            await axios.put(`http://localhost:8000/products/${id}`, updateData, {
+            await api.put(`/products/${id}`, updateData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
-import axios from 'axios';
+import api from "../../../utils/api";
 import 'react-toastify/dist/ReactToastify.css';
 
 const BillingAddressForm = ({ userId ,fetchAddresses}) => {
@@ -86,7 +86,7 @@ const BillingAddressForm = ({ userId ,fetchAddresses}) => {
         };
 
         try {
-            const res = await axios.post('http://localhost:8000/addresses/', payload);
+            const res = await api.post('/addresses/', payload);
             toast.success('Billing address saved successfully!');
             setFormData({
                 billingFirstName: '',

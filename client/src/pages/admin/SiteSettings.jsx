@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import api from "../../utils/api";
 import Swal from "sweetalert2";
 
 const SiteSettings = () => {
@@ -14,8 +15,6 @@ const SiteSettings = () => {
   
   const [isLoading, setIsLoading] = useState(false);
 
-  const BACKEND_URL = "http://localhost:8000"; // Replace with your actual backend URL
-
   useEffect(() => {
     fetchAboutPage();
     fetchContactPage();
@@ -23,9 +22,8 @@ const SiteSettings = () => {
 
   const fetchAboutPage = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/about-page`);
-      if (!response.ok) throw new Error("Failed to fetch about page");
-      const data = await response.json();
+      const response = await api.get("/about-page");
+      const data = response.data;
 
       if (data && data.data.content) {
         setAboutContent(data.data.content);
@@ -37,9 +35,8 @@ const SiteSettings = () => {
 
   const fetchContactPage = async () => {
     try {
-      const response = await fetch(`${BACKEND_URL}/contact`);
-      if (!response.ok) throw new Error("Failed to fetch contact page");
-      const data = await response.json();
+      const response = await api.get("/contact");
+      const data = response.data;
       if (data) {
         setContactEmail(data.contactEmail || "");
         setContactNumber(data.contactNumber || "");
@@ -84,19 +81,10 @@ const SiteSettings = () => {
     if (validateAboutContent(aboutContent)) {
       setIsLoading(true);
       try {
-        const response = await fetch(`${BACKEND_URL}/about-page`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ content: aboutContent }),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to update about page content");
-        }
+        await api.put("/about-page", { content: aboutContent });
         Swal.fire("Success", "About page content updated successfully!", "success");
       } catch (error) {
-        Swal.fire("Error", error.message, "error");
+        Swal.fire("Error", error.response?.data?.message || error.message, "error");
       } finally {
         setIsLoading(false);
       }
@@ -111,19 +99,10 @@ const SiteSettings = () => {
     if (isEmailValid && isNumberValid) {
       setIsLoading(true);
       try {
-        const response = await fetch(`${BACKEND_URL}/contact`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ contactEmail, contactNumber }),
-        });
-        if (!response.ok) {
-          throw new Error("Failed to update contact info");
-        }
+        await api.put("/contact", { contactEmail, contactNumber });
         Swal.fire("Success", "Contact info updated successfully!", "success");
       } catch (error) {
-        Swal.fire("Error", error.message, "error");
+        Swal.fire("Error", error.response?.data?.message || error.message, "error");
       } finally {
         setIsLoading(false);
       }

@@ -50,6 +50,8 @@ app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
+app.use(errorHandler);
+
 app.get("/",(req,res)=>res.send("hello world"));
 
 connectDB()
@@ -60,5 +62,8 @@ connectDB()
 })
 .catch((err) => {
     console.log("MONGO db connection failed !!! ", err);
+})
+
+ONGO db connection failed !!! ", err);
 })
 

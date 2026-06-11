@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api";
 import { useAuth } from "../../contexts/AuthContext"; // Importing AuthContext
 
 const Cart = () => {
@@ -70,7 +70,7 @@ setDiscountAmount(offer.maxDiscount);
 		}
 	};
 
-	// Fetch cart items dynamically (replace the API endpoint with your own)
+	// Fetch cart items dynamically
 	useEffect(() => {
 		const user = JSON.parse(localStorage.getItem("user"));
 		const token = localStorage.getItem("token");
@@ -79,22 +79,19 @@ setDiscountAmount(offer.maxDiscount);
 			return;
 		}
 
-		axios
-			.get(`http://localhost:8000/cart/${user._id}`) // Replace with your cart API endpoint
+		api
+			.get(`/cart/${user._id}`)
 			.then((response) => {
-				console.log(response.data);
 				setCart(response.data.items); // Ensure the data structure is correct
 				updateCartCount(response.data.items.length); // Update the global cart count
 			})
 			.catch((error) => toast.error("Failed to fetch cart data"));
 		// Fetch offers
 
-		axios
-			.get("http://localhost:8000/offers")
+		api
+			.get("/offers")
 			.then((res) => {
 				const activeOffers = res.data.filter((o) => o.activeStatus);
-				console.log(res);
-				console.log(activeOffers);
 				setOffers(activeOffers);
 			})
 			.catch(() => toast.error("Failed to load offers"));
@@ -113,8 +110,8 @@ setDiscountAmount(offer.maxDiscount);
 		);
 
 		const updatedItem = cart.find((item) => item.productId._id === id);
-		axios
-			.put(`http://localhost:8000/cart/${user._id}`, {
+		api
+			.put(`/cart/${user._id}`, {
 				productId: id,
 				quantity: updatedItem.quantity + amount,
 			})
@@ -130,8 +127,8 @@ setDiscountAmount(offer.maxDiscount);
 	const handleDelete = (id) => {
 		const user = JSON.parse(localStorage.getItem("user"));
 
-		axios
-			.delete(`http://localhost:8000/cart/${user._id}`, {
+		api
+			.delete(`/cart/${user._id}`, {
 				data: { productId: id },
 			})
 			.then(() => {

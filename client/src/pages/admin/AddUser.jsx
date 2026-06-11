@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../utils/api";
 
 const AddUser = () => {
   const [formData, setFormData] = useState({
@@ -96,7 +96,7 @@ const AddUser = () => {
       submission.append("authType", "Email"); // hardcoded
       submission.append("status", "Active"); // hardcoded
 
-      await axios.post("http://localhost:8000/users", submission, {
+      await api.post("/users", submission, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../../utils/api";
 
 const About = () => {
   const [content, setContent] = useState(""); // State to store the fetched content
@@ -11,7 +11,7 @@ const About = () => {
   useEffect(() => {
     const fetchAboutPage = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/about-page");
+        const response = await api.get("/about-page");
         if (response.data && response.data.data) {
           setContent(response.data.data.content); // Set content from the API response
         }
