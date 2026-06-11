@@ -1,0 +1,47 @@
+const request = require("supertest");
+const express = require("express");
+const validate = require("../src/middlewares/validate.middleware");
+const { registerSchema } = require("../src/validations/user.validation");
+const errorHandler = require("../src/middlewares/error.middleware");
+
+const app = express();
+app.use(express.json());
+
+app.post("/register", validate(registerSchema), (req, res) => {
+    res.status(200).json({ success: true });
+});
+
+app.use(errorHandler);
+
+describe("Validation Middleware", () => {
+    it("should fail if required fields are missing", async () => {
+        const res = await request(app).post("/register").send({});
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toContain("body.firstName");
+        expect(res.body.message).toContain("expected string, received undefined");
+    });
+
+    it("should fail if email is invalid", async () => {
+        const res = await request(app).post("/register").send({
+            firstName: "John",
+            lastName: "Doe",
+            email: "invalid-email",
+            mobile: "1234567890",
+            password: "password123"
+        });
+        expect(res.statusCode).toBe(400);
+        expect(res.body.message).toContain("body.email: Invalid email address");
+    });
+
+    it("should succeed with valid data", async () => {
+        const res = await request(app).post("/register").send({
+            firstName: "John",
+            lastName: "Doe",
+            email: "john@example.com",
+            mobile: "1234567890",
+            password: "password123"
+        });
+        expect(res.statusCode).toBe(200);
+        expect(res.body.success).toBe(true);
+    });
+});

@@ -9,8 +9,11 @@ const validate = (schema) => (req, res, next) => {
         });
         next();
     } catch (error) {
-        const errorMessage = error.errors?.map((err) => `${err.path.join(".")}: ${err.message}`).join(", ");
-        throw new ApiError(400, errorMessage || "Validation Error");
+        if (error.issues) {
+            const errorMessage = error.issues.map((err) => `${err.path.join(".")}: ${err.message}`).join(", ");
+            throw new ApiError(400, errorMessage);
+        }
+        throw new ApiError(400, error.message || "Validation Error");
     }
 };
 
