@@ -166,6 +166,10 @@ exports.addOrder = asyncHandler(async (req, res) => {
         paymentMode,
     } = req.body;
 
+    if (req.user._id.toString() !== userId.toString() && req.user.role !== 'Admin') {
+        throw new ApiError(403, "Unauthorized access");
+    }
+
     // Validate if products are provided
     if (!products || products.length === 0) {
         throw new ApiError(400, "At least one product is required.");
@@ -240,6 +244,10 @@ exports.updateOrder = asyncHandler(async (req, res) => {
     const existingOrder = await Order.findById(orderId);
     if (!existingOrder) {
         throw new ApiError(404, "Order not found.");
+    }
+
+    if (existingOrder.userId.toString() !== req.user._id.toString() && req.user.role !== 'Admin') {
+        throw new ApiError(403, "Unauthorized access");
     }
 
     // Validate products
@@ -326,6 +334,10 @@ exports.markOrderAsDeleted = asyncHandler(async (req, res) => {
 
     if (!order) {
         throw new ApiError(404, "Order not found.");
+    }
+
+    if (order.userId.toString() !== req.user._id.toString() && req.user.role !== 'Admin') {
+        throw new ApiError(403, "Unauthorized access");
     }
 
     order.isDeleted = true;
