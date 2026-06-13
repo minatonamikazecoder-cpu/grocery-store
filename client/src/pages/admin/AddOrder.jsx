@@ -31,11 +31,10 @@ const AddOrder = () => {
         pinCode: "",
         phone: "",
         shippingCharge: "",
-        setErrors(newErrors);
-        };
+    });
 
-        const [users, setUsers] = useState([]);
-        const [products, setProducts] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [products, setProducts] = useState([]);
 
         useEffect(() => {
         fetchUsers();

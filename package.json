@@ -8,6 +8,8 @@
     "dev": "concurrently \"npm run start-frontend\" \"npm run start-backend\""
   },
   "devDependencies": {
+    "@playwright/mcp": "^0.0.76",
+    "@playwright/test": "^1.60.0",
     "concurrently": "^8.2.2"
   },
   "keywords": [],
