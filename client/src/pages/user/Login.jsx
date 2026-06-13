@@ -56,7 +56,7 @@ try {
     toast.success("Login successful!");
     login(res.data.token, res.data.user);
 
-    if (res.data.user.role === "admin") {
+    if (res.data.user.role === "Admin") {
         navigate("/admin");
     } else {
         navigate("/");

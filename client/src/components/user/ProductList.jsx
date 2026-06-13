@@ -114,7 +114,8 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
                       alt={product.productName}
                     />
                   </Link>
-                  <p
+                    <p
+                    data-testid={`wishlist-toggle-${product._id}`}
                     className="like text-decoration-none position-absolute top-0 end-0 m-2 px-2 py-1 rounded-pill"
                     style={{
                       cursor: "pointer",
@@ -169,6 +170,7 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
                       </button>
                     ) : (
                       <button
+                        data-testid={`add-to-cart-${product._id}`}
                         className="primary-btn order-link mt-sm-1"
                         onClick={() => handleAddToCartClick(product._id)}
                         disabled={addingToCartId === product._id}
