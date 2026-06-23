@@ -1,16 +1,21 @@
 const request = require("supertest");
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const { verifyJWT, verifyAdmin } = require("../src/middlewares/auth.middleware");
-const ApiError = require("../src/utils/ApiError");
-const errorHandler = require("../src/middlewares/error.middleware");
+const ApiError = require("../dist/utils/ApiError");
+const { errorHandler } = require("../dist/middlewares/error.middleware");
+
+// Mock AppDataSource
+const { AppDataSource } = require("../dist/db/data-source");
+jest.mock("../dist/db/data-source", () => ({
+  AppDataSource: {
+    getRepository: jest.fn()
+  }
+}));
+
+const { verifyJWT, verifyAdmin } = require("../dist/middlewares/auth.middleware");
 
 const app = express();
 app.use(express.json());
-
-// Mock User model
-const User = require("../src/models/User");
-jest.mock("../src/models/User");
 
 app.get("/private", verifyJWT, (req, res) => {
     res.status(200).json({ success: true, user: req.user });
@@ -44,28 +49,30 @@ describe("Security Middleware", () => {
     });
 
     it("should succeed with a valid token", async () => {
-        const mockUser = { _id: "123", email: "test@test.com", role: "User" };
-        const token = jwt.sign({ id: mockUser._id }, JWT_SECRET);
+        const mockUser = { id: "11111111-1111-1111-1111-111111111111", email: "test@test.com", role: "User" };
+        const token = jwt.sign({ id: mockUser.id }, JWT_SECRET);
         
-        User.findById.mockReturnValue({
-            select: jest.fn().mockResolvedValue(mockUser)
-        });
+        const mockUserRepo = {
+            findOne: jest.fn().mockResolvedValue(mockUser)
+        };
+        AppDataSource.getRepository.mockReturnValue(mockUserRepo);
 
         const res = await request(app)
             .get("/private")
             .set("Authorization", `Bearer ${token}`);
 
         expect(res.statusCode).toBe(200);
-        expect(res.body.user._id).toBe(mockUser._id);
+        expect(res.body.user.id).toBe(mockUser.id);
     });
 
     it("should fail admin route if user is not admin", async () => {
-        const mockUser = { _id: "123", email: "test@test.com", role: "User" };
-        const token = jwt.sign({ id: mockUser._id }, JWT_SECRET);
+        const mockUser = { id: "11111111-1111-1111-1111-111111111111", email: "test@test.com", role: "User" };
+        const token = jwt.sign({ id: mockUser.id }, JWT_SECRET);
         
-        User.findById.mockReturnValue({
-            select: jest.fn().mockResolvedValue(mockUser)
-        });
+        const mockUserRepo = {
+            findOne: jest.fn().mockResolvedValue(mockUser)
+        };
+        AppDataSource.getRepository.mockReturnValue(mockUserRepo);
 
         const res = await request(app)
             .get("/admin")
@@ -76,12 +83,13 @@ describe("Security Middleware", () => {
     });
 
     it("should succeed admin route if user is admin", async () => {
-        const mockAdmin = { _id: "456", email: "admin@test.com", role: "Admin" };
-        const token = jwt.sign({ id: mockAdmin._id }, JWT_SECRET);
+        const mockAdmin = { id: "22222222-2222-2222-2222-222222222222", email: "admin@test.com", role: "Admin" };
+        const token = jwt.sign({ id: mockAdmin.id }, JWT_SECRET);
         
-        User.findById.mockReturnValue({
-            select: jest.fn().mockResolvedValue(mockAdmin)
-        });
+        const mockUserRepo = {
+            findOne: jest.fn().mockResolvedValue(mockAdmin)
+        };
+        AppDataSource.getRepository.mockReturnValue(mockUserRepo);
 
         const res = await request(app)
             .get("/admin")

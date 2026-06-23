@@ -1,0 +1,12 @@
+#!/bin/bash
+# check-all: Run both frontend and backend checks.
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+STATUS=0
+
+"$DIR/check-frontend" || STATUS=1
+echo ""
+"$DIR/check-backend" || STATUS=1
+
+exit $STATUS

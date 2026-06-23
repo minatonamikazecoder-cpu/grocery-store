@@ -1,8 +1,8 @@
 const request = require("supertest");
 const express = require("express");
-const validate = require("../src/middlewares/validate.middleware");
-const { registerSchema } = require("../src/validations/user.validation");
-const errorHandler = require("../src/middlewares/error.middleware");
+const { validate } = require("../dist/middlewares/validate.middleware");
+const { registerSchema } = require("../dist/validations/user.validation");
+const { errorHandler } = require("../dist/middlewares/error.middleware");
 
 const app = express();
 app.use(express.json());
@@ -17,8 +17,10 @@ describe("Validation Middleware", () => {
     it("should fail if required fields are missing", async () => {
         const res = await request(app).post("/register").send({});
         expect(res.statusCode).toBe(400);
-        expect(res.body.message).toContain("body.firstName");
-        expect(res.body.message).toContain("expected string, received undefined");
+        expect(res.body.message).toBe("Validation failed");
+        const firstNameErr = res.body.errors.find(e => e.field === "firstName");
+        expect(firstNameErr).toBeDefined();
+        expect(firstNameErr.message).toBe("Invalid input: expected string, received undefined");
     });
 
     it("should fail if email is invalid", async () => {
@@ -30,7 +32,10 @@ describe("Validation Middleware", () => {
             password: "password123"
         });
         expect(res.statusCode).toBe(400);
-        expect(res.body.message).toContain("body.email: Invalid email address");
+        expect(res.body.message).toBe("Validation failed");
+        const emailErr = res.body.errors.find(e => e.field === "email");
+        expect(emailErr).toBeDefined();
+        expect(emailErr.message).toBe("Invalid email address");
     });
 
     it("should succeed with valid data", async () => {

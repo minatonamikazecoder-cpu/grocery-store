@@ -1,81 +1,130 @@
 const request = require("supertest");
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const { verifyJWT } = require("../src/middlewares/auth.middleware");
-const orderController = require("../src/controllers/order.controller");
-const errorHandler = require("../src/middlewares/error.middleware");
-const Order = require("../src/models/Order");
-const OrderItem = require("../src/models/OrderItem");
-const Cart = require("../src/models/Cart");
-const User = require("../src/models/User");
-const Product = require("../src/models/Product");
-
-jest.mock("../src/models/Order");
-jest.mock("../src/models/OrderItem");
-jest.mock("../src/models/Cart");
-jest.mock("../src/models/User");
-jest.mock("../src/models/Product");
-
-const app = express();
-app.use(express.json());
 
 const JWT_SECRET = "testsecret";
 process.env.JWT_SECRET = JWT_SECRET;
+
+// Mock AppDataSource
+const { AppDataSource } = require("../dist/db/data-source");
+jest.mock("../dist/db/data-source", () => ({
+  AppDataSource: {
+    getRepository: jest.fn(),
+    transaction: jest.fn()
+  }
+}));
+
+const { verifyJWT } = require("../dist/middlewares/auth.middleware");
+const orderController = require("../dist/controllers/order.controller");
+const { errorHandler } = require("../dist/middlewares/error.middleware");
+
+const app = express();
+app.use(express.json());
 
 app.post("/checkout", verifyJWT, orderController.checkout);
 app.get("/orders/:orderId", verifyJWT, orderController.getOrderById);
 app.use(errorHandler);
 
 describe("Order Controller Integration", () => {
-    const mockUser = { _id: "user123", role: "User" };
-    const token = jwt.sign({ id: mockUser._id }, JWT_SECRET);
+    const mockUser = { id: "11111111-1111-1111-1111-111111111111", role: "User" };
+    const token = jwt.sign({ id: mockUser.id }, JWT_SECRET);
+
+    let mockUserRepo;
+    let mockCartRepo;
+    let mockOrderRepo;
+    let mockOrderItemRepo;
+    let mockProductRepo;
+    let mockCartItemRepo;
 
     beforeEach(() => {
         jest.clearAllMocks();
-        User.findById.mockReturnValue({
-            select: jest.fn().mockResolvedValue(mockUser)
+
+        mockUserRepo = {
+            findOne: jest.fn().mockResolvedValue(mockUser)
+        };
+        mockCartRepo = {
+            findOne: jest.fn(),
+            create: jest.fn(),
+            save: jest.fn()
+        };
+        mockOrderRepo = {
+            findOne: jest.fn(),
+            findById: jest.fn(),
+            create: jest.fn(),
+            save: jest.fn()
+        };
+        mockOrderItemRepo = {
+            insertMany: jest.fn(),
+            find: jest.fn(),
+            create: jest.fn(),
+            save: jest.fn()
+        };
+        mockProductRepo = {
+            findOneBy: jest.fn(),
+            save: jest.fn()
+        };
+        mockCartItemRepo = {
+            delete: jest.fn(),
+            save: jest.fn()
+        };
+
+        AppDataSource.getRepository.mockImplementation((entity) => {
+            if (entity.name === "User") return mockUserRepo;
+            if (entity.name === "Cart") return mockCartRepo;
+            if (entity.name === "Order") return mockOrderRepo;
+            if (entity.name === "OrderItem") return mockOrderItemRepo;
+            if (entity.name === "Product") return mockProductRepo;
+        });
+
+        AppDataSource.transaction.mockImplementation(async (cb) => {
+            const mockEntityManager = {
+                getRepository: (entity) => {
+                    if (entity.name === "Order") return mockOrderRepo;
+                    if (entity.name === "OrderItem") return mockOrderItemRepo;
+                    if (entity.name === "Product") return mockProductRepo;
+                    if (entity.name === "CartItem") return mockCartItemRepo;
+                }
+            };
+            return cb(mockEntityManager);
         });
     });
 
     it("should successfully checkout a valid cart", async () => {
         const mockProduct = { 
-            _id: "prod1", 
+            id: "prod1", 
             salePrice: 100, 
             discount: 10, 
-            stock: 10,
-            save: jest.fn().mockResolvedValue(true)
+            stock: 10
         };
         const mockCart = {
-            userId: "user123",
-            items: [{ productId: mockProduct, quantity: 2 }],
-            save: jest.fn().mockResolvedValue(true)
+            userId: mockUser.id,
+            items: [{ productId: "prod1", product: mockProduct, quantity: 2 }]
         };
 
-        Cart.findOne.mockReturnValue({
-            populate: jest.fn().mockResolvedValue(mockCart)
-        });
-        
-        Order.prototype.save = jest.fn().mockResolvedValue({ _id: "order123" });
-        OrderItem.insertMany.mockResolvedValue([]);
+        mockCartRepo.findOne.mockResolvedValue(mockCart);
+        mockProductRepo.findOneBy.mockResolvedValue(mockProduct);
+        mockOrderRepo.create.mockReturnValue({ id: "order123" });
+        mockOrderRepo.save.mockResolvedValue({ id: "order123" });
+        mockOrderItemRepo.create.mockReturnValue({});
+        mockOrderItemRepo.save.mockResolvedValue({});
+        mockCartItemRepo.delete.mockResolvedValue({});
 
         const res = await request(app)
             .post("/checkout")
             .set("Authorization", `Bearer ${token}`)
-            .send({ userId: "user123", addressId: "addr1" });
+            .send({ userId: mockUser.id, addressId: "addr1" });
 
         expect(res.statusCode).toBe(201);
         expect(res.body.message).toBe("Checkout completed successfully.");
     });
 
     it("should fail checkout if cart is empty", async () => {
-        Cart.findOne.mockReturnValue({
-            populate: jest.fn().mockResolvedValue(null)
-        });
+        mockCartRepo.findOne.mockResolvedValue(null);
 
         const res = await request(app)
             .post("/checkout")
             .set("Authorization", `Bearer ${token}`)
-            .send({ userId: "user123", addressId: "addr1" });
+            .send({ userId: mockUser.id, addressId: "addr1" });
 
         expect(res.statusCode).toBe(400);
         expect(res.body.message).toBe("Cart is empty or not found.");
@@ -83,37 +132,45 @@ describe("Order Controller Integration", () => {
 
     it("should allow a user to get their own order", async () => {
         const mockOrder = { 
-            _id: "order123", 
-            userId: { _id: "user123" },
-            save: jest.fn()
+            id: "order123", 
+            userId: mockUser.id,
+            user: mockUser,
+            delAddress: { fullName: "John Doe" },
+            offer: null
         };
-        Order.findById.mockReturnValue({
-            populate: jest.fn().mockReturnThis(),
-            exec: jest.fn().mockResolvedValue(mockOrder)
-        });
-        OrderItem.find.mockReturnValue({
-            populate: jest.fn().mockReturnThis(),
-            select: jest.fn().mockReturnThis(),
-            exec: jest.fn().mockResolvedValue([{ productId: "prod1", quantity: 1 }])
-        });
+        
+        mockOrderRepo.findOne.mockResolvedValue(mockOrder);
+        
+        const mockOrderItem = {
+            product: {
+                id: "prod1",
+                productName: "Apple",
+                productImage: "apple.png",
+                salePrice: 10,
+                discount: 0
+            },
+            quantity: 1,
+            price: 10
+        };
+        mockOrderItemRepo.find.mockResolvedValue([mockOrderItem]);
 
         const res = await request(app)
             .get("/orders/order123")
             .set("Authorization", `Bearer ${token}`);
 
         expect(res.statusCode).toBe(200);
-        expect(res.body.order._id).toBe("order123");
+        expect(res.body.data.order.id).toBe("order123");
     });
 
     it("should prevent a user from getting another user's order", async () => {
         const mockOrder = { 
-            _id: "order123", 
-            userId: { _id: "otheruser" } 
+            id: "order123", 
+            userId: "22222222-2222-2222-2222-222222222222",
+            user: { id: "22222222-2222-2222-2222-222222222222" },
+            delAddress: { fullName: "John Doe" },
+            offer: null
         };
-        Order.findById.mockReturnValue({
-            populate: jest.fn().mockReturnThis(),
-            exec: jest.fn().mockResolvedValue(mockOrder)
-        });
+        mockOrderRepo.findOne.mockResolvedValue(mockOrder);
 
         const res = await request(app)
             .get("/orders/order123")

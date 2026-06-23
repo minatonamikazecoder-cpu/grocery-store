@@ -11,15 +11,18 @@
     "start": "npm run dev"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.101.0",
     "@tinymce/tinymce-react": "^6.1.0",
     "@tiptap/react": "^2.11.7",
     "@tiptap/starter-kit": "^2.11.7",
     "axios": "^1.8.4",
+    "bootstrap": "^5.3.8",
     "ckeditor5-build-classic": "^1.0.0",
     "cloudinary": "^2.6.0",
-    "react": "^18.3.1",
+    "dompurify": "^3.4.10",
+    "react": "^19.2.7",
     "react-data-table-component": "^7.7.0",
-    "react-dom": "^18.3.1",
+    "react-dom": "^19.2.7",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.2.0",
     "react-toastify": "^11.0.5",
@@ -27,14 +30,17 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
-    "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.5",
+    "@types/dompurify": "^3.0.5",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^4.3.4",
+    "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "^9.17.0",
     "eslint-plugin-react": "^7.37.2",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
     "globals": "^15.14.0",
+    "typescript": "^6.0.3",
     "vite": "^6.0.5"
   }
 }

@@ -1,0 +1,20 @@
+#!/bin/bash
+# check-frontend: Check frontend logs for runtime errors.
+
+LOG_FILE="server/logs/frontend-error.log"
+if [ -f "$LOG_FILE" ]; then
+    ERRORS=$(grep -i '"level":"error"' "$LOG_FILE" || true)
+    if [ -n "$ERRORS" ]; then
+        echo "=== [ERROR FOUND] Frontend Runtime Errors Detected ==="
+        echo "$ERRORS"
+        echo ""
+        echo "AGENT_DIRECTIVE: Antigravity, please read the stack traces above, locate the files where these runtime errors occurred, and fix the code to prevent them."
+        exit 1
+    else
+        echo "=== [OK] No Frontend Runtime Errors Detected ==="
+        exit 0
+    fi
+else
+    echo "Frontend log file $LOG_FILE not found."
+    exit 0
+fi

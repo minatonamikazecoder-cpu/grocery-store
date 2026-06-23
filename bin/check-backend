@@ -1,0 +1,25 @@
+#!/bin/bash
+# check-backend: Check backend logs for runtime errors.
+
+LOGS=("server/logs/backend-error.log" "server/logs/error.log")
+FOUND_ERRORS=0
+
+for LOG_FILE in "${LOGS[@]}"; do
+    if [ -f "$LOG_FILE" ]; then
+        ERRORS=$(grep -i '"level":"error"' "$LOG_FILE" || true)
+        if [ -n "$ERRORS" ]; then
+            echo "=== [ERROR FOUND] Backend Runtime Errors Detected in $LOG_FILE ==="
+            echo "$ERRORS"
+            echo ""
+            FOUND_ERRORS=1
+        fi
+    fi
+done
+
+if [ "$FOUND_ERRORS" -eq 1 ]; then
+    echo "AGENT_DIRECTIVE: Antigravity, please read the database or server stack traces above, trace them to the corresponding controllers/routes, and fix the code to prevent them."
+    exit 1
+else
+    echo "=== [OK] No Backend Runtime Errors Detected ==="
+    exit 0
+fi
