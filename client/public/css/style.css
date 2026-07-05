@@ -1191,3 +1191,41 @@ sidebar h6{
     background-color: #fff !important;
     border-color: #dee2e6 !important;
 }
+
+/* Smooth Page Transitions */
+.page-transition-wrapper {
+    animation: fadeInUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+    will-change: transform, opacity;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Cart & Wishlist Badge Bounce */
+.badge-bounce {
+    animation: bouncePop 0.5s ease;
+}
+
+@keyframes bouncePop {
+    0% {
+        transform: scale(1);
+    }
+    30% {
+        transform: scale(1.4);
+    }
+    60% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+

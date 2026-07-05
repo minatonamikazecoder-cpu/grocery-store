@@ -8,7 +8,31 @@ const Header = () => {
 	const [query, setQuery] = useState("");
 	const [isNavCollapsed, setIsNavCollapsed] = useState(true);
 	const navigate = useNavigate();
-  const { searchQuery, setSearchQuery } = useAuth();
+	const { searchQuery, setSearchQuery } = useAuth();
+
+	const [animateCart, setAnimateCart] = useState(false);
+	const prevCartCount = React.useRef(cartCount);
+
+	const [animateWishlist, setAnimateWishlist] = useState(false);
+	const prevWishlistCount = React.useRef(wishlistCount);
+
+	useEffect(() => {
+		if (cartCount > prevCartCount.current) {
+			setAnimateCart(true);
+			const timer = setTimeout(() => setAnimateCart(false), 500);
+			return () => clearTimeout(timer);
+		}
+		prevCartCount.current = cartCount;
+	}, [cartCount]);
+
+	useEffect(() => {
+		if (wishlistCount > prevWishlistCount.current) {
+			setAnimateWishlist(true);
+			const timer = setTimeout(() => setAnimateWishlist(false), 500);
+			return () => clearTimeout(timer);
+		}
+		prevWishlistCount.current = wishlistCount;
+	}, [wishlistCount]);
 	useEffect(() => {
 		const navbarToggler = document.querySelector(".navbar-toggler");
 		const navbarCollapse = document.querySelector(".navbar-collapse");
@@ -132,13 +156,13 @@ const Header = () => {
 									<Link to="/wishlist" className="icon-link me-2">
 										<div className="icon position-relative">
 											<i className="fa-regular fa-heart"></i>
-											<span className="badge-class">{wishlistCount}</span> {/* Dynamically show wishlist count from context */}
+											<span className={`badge-class ${animateWishlist ? "badge-bounce" : ""}`}>{wishlistCount}</span> {/* Dynamically show wishlist count from context */}
 										</div>
 									</Link>
 									<Link to="/cart" className="icon-link">
 										<div className="icon position-relative">
 											<i className="fa-solid fa-cart-shopping"></i>
-											<span className="badge-class">{cartCount}</span> {/* Dynamically show cart count from context */}
+											<span className={`badge-class ${animateCart ? "badge-bounce" : ""}`}>{cartCount}</span> {/* Dynamically show cart count from context */}
 										</div>
 									</Link>
 								</div>
