@@ -21,7 +21,7 @@ const addBanner = asyncHandler(async (req, res) => {
 });
 
 const getAllBanners = asyncHandler(async (req, res) => {
-    const banners = await Banner.find();
+    const banners = await Banner.find().lean();
     res.status(200).json(banners);
 });
 

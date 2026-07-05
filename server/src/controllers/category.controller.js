@@ -22,7 +22,7 @@ const createCategory = asyncHandler(async (req, res) => {
 
 // Get all categories
 const getAllCategories = asyncHandler(async (req, res) => {
-    const categories = await Category.find({ isDeleted: false });
+    const categories = await Category.find({ isDeleted: false }).lean();
     res.status(200).json(categories);
 });
 

@@ -74,9 +74,9 @@ exports.createProduct = asyncHandler(async (req, res) => {
 // Get all active products
 exports.getAllProducts = asyncHandler(async (req, res) => {
     // Step 1: Get all active products
-    const products = await Product.find({ isActive: true }).populate(
-        "categoryId"
-    );
+    const products = await Product.find({ isActive: true })
+        .populate("categoryId")
+        .lean();
 
     // Step 2: Aggregate reviews to get avg rating and total count for each product
     const reviewStats = await Review.aggregate([
@@ -106,7 +106,7 @@ exports.getAllProducts = asyncHandler(async (req, res) => {
             totalReviews: 0,
         };
         return {
-            ...product.toObject(),
+            ...product,
             averageRating: stats.avgRating,
             totalReviews: stats.totalReviews,
         };
@@ -134,7 +134,9 @@ exports.getTrendingProducts = asyncHandler(async (req, res) => {
     const products = await Product.find({
         _id: { $in: topProductIds },
         isActive: true,
-    }).populate("categoryId");
+    })
+    .populate("categoryId")
+    .lean();
 
     // Step 3: Get review stats
     const reviewStats = await Review.aggregate([
@@ -163,7 +165,7 @@ exports.getTrendingProducts = asyncHandler(async (req, res) => {
             totalReviews: 0,
         };
         return {
-            ...product.toObject(),
+            ...product,
             averageRating: stats.avgRating,
             totalReviews: stats.totalReviews,
         };
@@ -177,7 +179,8 @@ exports.getLatestProducts = asyncHandler(async (req, res) => {
     const products = await Product.find({ isActive: true })
         .sort({ createdAt: -1 })
         .limit(8)
-        .populate("categoryId");
+        .populate("categoryId")
+        .lean();
 
     const productIds = products.map((p) => p._id);
 
@@ -208,7 +211,7 @@ exports.getLatestProducts = asyncHandler(async (req, res) => {
             totalReviews: 0,
         };
         return {
-            ...product.toObject(),
+            ...product,
             averageRating: stats.avgRating,
             totalReviews: stats.totalReviews,
         };
@@ -286,7 +289,7 @@ exports.getProductsByCategoryId = asyncHandler(async (req, res) => {
     const { categoryId } = req.params;
 
     // Step 1: Get all active products for the given category
-    const products = await Product.find({ categoryId, isActive: true });
+    const products = await Product.find({ categoryId, isActive: true }).lean();
 
     if (products.length === 0) {
         throw new ApiError(404, "No products found in this category");
@@ -321,7 +324,7 @@ exports.getProductsByCategoryId = asyncHandler(async (req, res) => {
             totalReviews: 0,
         };
         return {
-            ...product.toObject(),
+            ...product,
             averageRating: stats.avgRating,
             totalReviews: stats.totalReviews,
         };

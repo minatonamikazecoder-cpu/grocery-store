@@ -3,6 +3,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser")
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const compression = require("compression");
 const connectDB = require("./db/index.js")
 const errorHandler = require("./middlewares/error.middleware.js");
 require("dotenv").config()
@@ -25,6 +26,9 @@ const dashboardRoutes = require("./routes/dashboard.js");
 const paymentRoutes = require("./routes/payment.js");
 
 const app = express()
+
+// Gzip Compression
+app.use(compression());
 
 // Security Middleware
 app.use(helmet());
