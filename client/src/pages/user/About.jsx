@@ -26,11 +26,23 @@ const About = () => {
   }, []); // Empty dependency array to run once when the component mounts
 
   if (loading) {
-    return <div>Loading...</div>; // Display loading message while content is being fetched
+    return (
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "300px" }}>
+        <div className="spinner-border text-success" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>{error}</div>; // Display error message if something goes wrong
+    return (
+      <div className="container mt-5 text-center">
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      </div>
+    );
   }
 
   return (
