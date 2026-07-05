@@ -113,6 +113,7 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
                       src={product.productImage || "/img/placeholder.jpg"}
                       alt={product.productName}
                       onError={(e) => { e.target.onerror = null; e.target.src = "/img/placeholder.jpg"; }}
+                      loading="lazy"
                     />
                   </Link>
                     <p

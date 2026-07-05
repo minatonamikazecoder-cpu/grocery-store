@@ -93,6 +93,7 @@ const fetchWishlist = async () => {
                   className="image-item d-inline-block"
                   style={{ width: '60px', height: '60px', objectFit: 'cover', marginRight: '10px' }}
                   onError={(e) => { e.target.onerror = null; e.target.src = "/img/placeholder.jpg"; }}
+                  loading="lazy"
                 />
                 <div className="d-inline-block">{item.productName}</div>
               </td>
