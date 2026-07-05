@@ -88,11 +88,11 @@ const fetchWishlist = async () => {
             <tr key={item._id}>
               <td>
                 <img
-                  src={item.productImage || "https://via.placeholder.com/60?text=Product"}
+                  src={item.productImage || "/img/placeholder.jpg"}
                   alt={item.productName}
                   className="image-item d-inline-block"
                   style={{ width: '60px', height: '60px', objectFit: 'cover', marginRight: '10px' }}
-                  onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/60?text=Product"; }}
+                  onError={(e) => { e.target.onerror = null; e.target.src = "/img/placeholder.jpg"; }}
                 />
                 <div className="d-inline-block">{item.productName}</div>
               </td>
