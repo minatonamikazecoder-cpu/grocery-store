@@ -169,7 +169,7 @@ const checkPurchaseAndReview = async () => {
             <div className="row">
                 <div className="col-md-5">
                     <img 
-                      src={product.productImage} 
+                      src={product.productImage || "https://via.placeholder.com/500?text=Product+Image"} 
                       alt="Product" 
                       className="img-thumbnail p-3 w-100" 
                       onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/500?text=Product+Image"; }}

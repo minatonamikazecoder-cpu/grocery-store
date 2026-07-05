@@ -88,7 +88,7 @@ const fetchWishlist = async () => {
             <tr key={item._id}>
               <td>
                 <img
-                  src={item.productImage}
+                  src={item.productImage || "https://via.placeholder.com/60?text=Product"}
                   alt={item.productName}
                   className="image-item d-inline-block"
                   style={{ width: '60px', height: '60px', objectFit: 'cover', marginRight: '10px' }}

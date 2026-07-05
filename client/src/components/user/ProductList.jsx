@@ -110,7 +110,7 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
                     <img
                       className="img-thumbnail img-fluid p-4"
                       style={{ height: "225px" }}
-                      src={product.productImage}
+                      src={product.productImage || "https://via.placeholder.com/300?text=Product+Image"}
                       alt={product.productName}
                       onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/300?text=Product+Image"; }}
                     />
