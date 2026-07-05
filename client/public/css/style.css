@@ -1166,3 +1166,28 @@ sidebar h6{
     margin:12px !important;
 }
 
+/* Custom Green Pagination */
+.pagination .page-link {
+    color: var(--primary) !important;
+    background-color: #fff !important;
+    border-color: #dee2e6 !important;
+    box-shadow: none !important;
+}
+
+.pagination .page-link:hover {
+    color: var(--dark-primary) !important;
+    background-color: var(--secondary) !important;
+    border-color: #dee2e6 !important;
+}
+
+.pagination .page-item.active .page-link {
+    color: #fff !important;
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #6c757d !important;
+    background-color: #fff !important;
+    border-color: #dee2e6 !important;
+}
