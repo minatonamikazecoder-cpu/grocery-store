@@ -92,6 +92,7 @@ const fetchWishlist = async () => {
                   alt={item.productName}
                   className="image-item d-inline-block"
                   style={{ width: '60px', height: '60px', objectFit: 'cover', marginRight: '10px' }}
+                  onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/60?text=Product"; }}
                 />
                 <div className="d-inline-block">{item.productName}</div>
               </td>

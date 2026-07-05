@@ -112,6 +112,7 @@ const paginate = (pageNumber) => setCurrentPage(pageNumber);
                       style={{ height: "225px" }}
                       src={product.productImage}
                       alt={product.productName}
+                      onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/300?text=Product+Image"; }}
                     />
                   </Link>
                     <p

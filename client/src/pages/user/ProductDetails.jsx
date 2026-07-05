@@ -168,7 +168,12 @@ const checkPurchaseAndReview = async () => {
 
             <div className="row">
                 <div className="col-md-5">
-                    <img src={product.productImage} alt="Product" className="img-thumbnail p-3 w-100" />
+                    <img 
+                      src={product.productImage} 
+                      alt="Product" 
+                      className="img-thumbnail p-3 w-100" 
+                      onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/500?text=Product+Image"; }}
+                    />
                 </div>
                 <div className="col-md-7 px-5 d-flex flex-column align-items-start">
                     <h4 className="product-title">{product.productName}</h4>
