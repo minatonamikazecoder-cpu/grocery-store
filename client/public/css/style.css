@@ -1229,3 +1229,26 @@ sidebar h6{
     }
 }
 
+/* About Page Typography Styling */
+.about-content {
+    line-height: 1.8;
+    color: #4a5568;
+    font-size: 1.05rem;
+}
+
+.about-content h1, .about-content h2, .about-content h3 {
+    color: var(--primary) !important;
+    font-weight: 700;
+    margin-top: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.about-content p {
+    margin-bottom: 1.2rem;
+}
+
+.about-content strong {
+    color: #1a202c;
+}
+
+
